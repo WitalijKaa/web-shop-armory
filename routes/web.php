@@ -8,6 +8,7 @@ Route::group(['as' => 'web.', /* 'middleware' => ['web-auth'] */], function() {
 
     Route::group(['as' => 'product-item.', 'prefix' => 'product'], function() {
         Route::get('list', App\Http\Controllers\Shop\ProductItem\ProductItemListAction::class)->name('list');
+        Route::post('add-to-cart', App\Http\Controllers\Shop\ProductItem\ProductItemAddToCartAction::class)->name('add-to-cart');
     });
 });
 
@@ -15,9 +16,11 @@ Route::group(['as' => 'web.', /* 'middleware' => ['web-auth'] */], function() {
 
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return redirect()->route('web.product-item.list');
+
+    // return Inertia::render('welcome', [
+    //     'canRegister' => Features::enabled(Features::registration()),
+    // ]);
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {

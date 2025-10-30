@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $id
  * @property int $product_id
  * @property int $amount
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product first($columns = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product orderBy($column, $direction = 'asc')
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product where($column, $operator = null, $value = null, $boolean = 'and')
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Product wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem first($columns = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem orderBy($column, $direction = 'asc')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereAmount($value)
  *
  * @property-read Product $product
  * 
