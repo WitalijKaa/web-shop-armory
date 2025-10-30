@@ -10,7 +10,7 @@ export default function ProductItemBasic({ item, ix, allowRemove = false }) {
         <h4 className="text-4l text-center my-4">in cart {item.inCartItem.amount}</h4>
       )}
       <div className="flex flex-row justify-between">
-        {item.amount > 0 && (
+        {(item.amount - (item.inCartItem?.amount | 0)) > 0 && (
         <Link
           href={addToCart()}
           method="post"

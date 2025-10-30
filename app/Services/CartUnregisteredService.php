@@ -38,4 +38,15 @@ class CartUnregisteredService implements CartProviderInterface
             minutes: self::COOKIE_TTL_MINUTES,
         ));
     }
+
+    public function cartReserved(Request $request): ?Cart
+    {
+        if ($uuid = $request->cookie(self::COOKIE_NAME)) {
+            return Cart::whereClientUuid($uuid)
+                ->whereStatus(CartStatusEnum::reserved)
+                ->with(['items'])
+                ->first();
+        }
+        return null;
+    }
 }

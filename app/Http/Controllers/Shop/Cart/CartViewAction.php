@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Shop\Cart;
 
 use App\Interfaces\CartProviderInterface;
 use App\Models\Shop\Product\ProductItem;
-use App\Request\ProductItemAddToCartRequest;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CartViewAction
 {
-    public function __invoke(CartProviderInterface $cartProvider)
+    public function __invoke(Request $request, CartProviderInterface $cartProvider)
     {
-        if (!$cartProvider->cart()->items->count()) {
+        $cartReserved = $cartProvider->cartReserved($request)?->loadMissing(['items.productItem.product']);
+
+        if (!$cartProvider->cart()->items->count() && !$cartReserved) {
             // log error
             return redirect()->route('web.product-item.list');
         }
@@ -21,7 +23,8 @@ class CartViewAction
 
         return Inertia::render('shop/cart', [
           'items' => $models,
-          'cart_uuid' => $cartProvider->cart()->client_uuid,
+          'cart' => $cartProvider->cart(),
+          'cart_reserved' => $cartReserved,
         ]);
     }
 }

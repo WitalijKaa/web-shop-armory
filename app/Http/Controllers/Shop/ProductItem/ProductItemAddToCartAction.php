@@ -16,9 +16,8 @@ class ProductItemAddToCartAction
             return redirect()->route('web.product-item.list');
         }
 
-        $cartItems = $cartProvider->cart()->addToCartByProductID($request->product_id);
-        event(new ProductItemAmountChangedEvent($cartItems->product_item_id));
+        $cartProvider->cart()->addToCartByProductID($request->product_id);
 
-        return back(); //->with('status', __('Product ":name" added to cart.', ['name' => $model->product->name]));
+        return back();
     }
 }

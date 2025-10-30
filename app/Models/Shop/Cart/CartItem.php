@@ -3,6 +3,7 @@
 namespace App\Models\Shop\Cart;
 
 use App\Models\Shop\Product\ProductItem;
+use App\Request\ProductItemAddToCartRequest;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem whereAmount($value)
  *
  * @property-read Cart $cart
- * @property-read ProductItemModel $productItem
+ * @property-read ProductItem $productItem
  *
  * @mixin \Eloquent
  */
@@ -35,31 +36,36 @@ class CartItem extends \Eloquent
 
     public function removeFromCart(int $amount = 1): void
     {
-        DB::transaction(function () use ($amount) {
+        $this->amount -= $amount;
+
+        if ($this->amount > 0) {
+            $this->save();
+        } else {
+            $this->delete();
+        }
+    }
+
+    /*
+    public function cancelReservation(): void
+    {
+        DB::transaction(function () {
             $items = ProductItem::whereProductId($this->product_item_id)
                 ->lockForUpdate()
                 ->first();
 
-            $amount = $this->amount < $amount ? $this->amount : $amount;
+            $amount = $this->amount;
 
             $items->amount += $amount;
             $items->amount_reserved -= $amount;
 
-            $this->amount -= $amount;
-
             $items->save();
-
-            if ($this->amount > 0) {
-                $this->save();
-            } else {
-                $this->delete();
-            }
         });
     }
+    */
 
     public static function itemsToAddToCart(int $cartID, int $productItemID): static
     {
-        $model = static::whereCartId($cartID)->whereProductItemId($productItemID)->lockForUpdate()->first();
+        $model = static::whereCartId($cartID)->whereProductItemId($productItemID)->first();
         if (!$model) {
             $model = new static();
             $model->cart_id = $cartID;
@@ -76,7 +82,7 @@ class CartItem extends \Eloquent
 
     public function productItem(): BelongsTo
     {
-        return $this->belongsTo(ProductItemModel::class, 'cart_item_id', 'id');
+        return $this->belongsTo(ProductItem::class, 'product_item_id', 'id');
     }
 
     protected function casts(): array

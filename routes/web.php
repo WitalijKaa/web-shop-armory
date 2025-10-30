@@ -12,6 +12,8 @@ Route::group(['as' => 'web.', 'middleware' => [CartUnregisteredMiddleware::class
 
         Route::post('add-to-cart', App\Http\Controllers\Shop\ProductItem\ProductItemAddToCartAction::class)->name('add-to-cart');
         Route::delete('remove-from-cart', App\Http\Controllers\Shop\ProductItem\ProductItemRemoveFromCartAction::class)->name('remove-from-cart')->withoutMiddleware(CartUnregisteredMiddleware::class);
+        Route::post('cart-reservation', App\Http\Controllers\Shop\Cart\CartReservationAction::class)->name('cart-reservation');
+        Route::post('cart-payment', App\Http\Controllers\Shop\Cart\CartPaymentAction::class)->name('cart-payment');
     });
 });
 

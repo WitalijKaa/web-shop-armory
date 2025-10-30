@@ -17,7 +17,7 @@ class ProductItemLowAmountDetectListener
 
     public function handle(ProductItemAmountChangedEvent $event)
     {
-        if (config('shop.product.amount.low') < ($amount = (int)ProductItem::whereProductId($event->productItemID)->sum('amount')) > ) {
+        if (config('shop.product.amount.low') < ($amount = (int)ProductItem::whereProductId($event->productItemID)->sum('amount'))) {
             return;
         }
 
