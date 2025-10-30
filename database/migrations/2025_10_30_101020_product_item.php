@@ -20,6 +20,8 @@ return new class extends Migration
                 ->references('id')
                 ->on(Product::TABLE_NAME)
                 ->onDelete('cascade')->onUpdate('cascade');
+
+            $table->index(['product_id', 'amount'], 'ix_pi_product_amount');
         });
     }
 

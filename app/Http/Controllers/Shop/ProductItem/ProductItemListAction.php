@@ -10,11 +10,14 @@ class ProductItemListAction
 {
     public function __invoke(CartProviderInterface $cartProvider)
     {
-        $models = ProductItem::where('amount', '>', 0)->with('product')->get();
+        $models = ProductItem::where('amount', '>', 0)
+            ->orWhereIn('id', $cartProvider->cart()->productsItemsIDs())
+            ->with('product')->get();
+        $cartProvider->cart()->setInCartAmount($models);
 
         return Inertia::render('shop/list', [
           'items' => $models,
-          'cart' => $cartProvider->cart(),
+          'cart_uuid' => $cartProvider->cart()->items->count() ? $cartProvider->cart()->client_uuid : null,
         ]);
     }
 }

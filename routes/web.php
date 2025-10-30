@@ -8,7 +8,10 @@ Route::group(['as' => 'web.', 'middleware' => [CartUnregisteredMiddleware::class
 
     Route::group(['as' => 'product-item.', 'prefix' => 'product'], function() {
         Route::get('list', App\Http\Controllers\Shop\ProductItem\ProductItemListAction::class)->name('list');
+        Route::get('cart', App\Http\Controllers\Shop\Cart\CartViewAction::class)->name('cart');
+
         Route::post('add-to-cart', App\Http\Controllers\Shop\ProductItem\ProductItemAddToCartAction::class)->name('add-to-cart');
+        Route::delete('remove-from-cart', App\Http\Controllers\Shop\ProductItem\ProductItemRemoveFromCartAction::class)->name('remove-from-cart')->withoutMiddleware(CartUnregisteredMiddleware::class);
     });
 });
 

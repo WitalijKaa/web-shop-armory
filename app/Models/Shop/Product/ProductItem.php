@@ -2,6 +2,7 @@
 
 namespace App\Models\Shop\Product;
 
+use App\Models\Shop\Cart\CartItem;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereAmountReserved($value)
  *
+ * @property int $inCartItem
+ * 
  * @property-read Product $product
  * 
  * @mixin \Eloquent
@@ -26,6 +29,16 @@ class ProductItem extends \Eloquent
 {
     public const string TABLE_NAME = 'product_item';
     protected $table = self::TABLE_NAME;
+
+    protected $appends = ['inCartItem'];
+
+    private CartItem $_inCartItem;
+    public function getInCartItemAttribute() {
+        return $this->_inCartItem ?? null;
+    }
+    public function setInCartItemAttribute($value) {
+        $this->_inCartItem = $value;
+    }
 
     public $timestamps = false;
     protected $guarded = ['id'];

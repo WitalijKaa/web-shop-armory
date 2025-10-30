@@ -26,6 +26,7 @@ class CartUnregisteredService implements CartProviderInterface
 
         $this->cart = Cart::whereClientUuid($uuid)
             ->whereStatus(CartStatusEnum::potential)
+            ->with(['items'])
             ->first() ?? new Cart();
 
         $this->cart->client_uuid = $uuid;

@@ -4,6 +4,8 @@ namespace App\Models\Shop\Cart;
 
 use App\Models\Shop\Product\ProductItem;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -31,17 +33,37 @@ class Cart extends \Eloquent
             $this->save();
         }
 
-        $items = ProductItem::whereProductId($id)->first();
-        if ($items->amount >= $amount) {
-            $items->amount -= $amount;
-            $items->amount_reserved += $amount;
-            
-            $cartItems = CartItem::itemsToAddToCart($this->id, $items->id);
-            $cartItems->amount += $amount;
+        DB::transaction(function () use ($id, $amount) {
+            $items = ProductItem::whereProductId($id)
+                ->where('amount', '>=', $amount)
+                ->lockForUpdate()
+                ->first();
 
-            $items->save();
-            $cartItems->save();
-        }
+            if ($items) {
+                $items->amount -= $amount;
+                $items->amount_reserved += $amount;
+
+                $cartItems = CartItem::itemsToAddToCart($this->id, $items->id);
+                $cartItems->amount += $amount;
+
+                $items->save();
+                $cartItems->save();
+            }
+        });
+    }
+
+    public function productsItemsIDs(): array
+    {
+        return CartItem::whereCartId($this->id)->pluck('product_item_id')->toArray();
+    }
+
+    public function setInCartAmount(Collection $productItems): void
+    {
+        $this->items->each(function (CartItem $cartItem) use ($productItems) {
+            if ($itemInCart = $productItems->filter(fn (ProductItem $productItem) => $productItem->id == $cartItem->product_item_id)->first()) {
+                $itemInCart->inCartItem = $cartItem;
+            }
+        });
     }
 
     protected $guarded = ['id'];

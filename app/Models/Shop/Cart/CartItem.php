@@ -34,7 +34,7 @@ class CartItem extends \Eloquent
 
     public static function itemsToAddToCart(int $cartID, int $productItemID): static
     {
-        $model = static::whereCartId($cartID)->whereProductItemId($productItemID)->first();
+        $model = static::whereCartId($cartID)->whereProductItemId($productItemID)->lockForUpdate()->first();
         if (!$model) {
             $model = new static();
             $model->cart_id = $cartID;
