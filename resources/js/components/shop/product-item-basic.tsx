@@ -3,7 +3,7 @@ import { addToCart } from '@/routes/web/product-item';
 
 export default function ProductItemBasic({ item, ix }) {
   return (
-    <div className="w-1/4 rounded-2xl border border-[#19140035] bg-white p-6 shadow-sm my-8 ml-8">
+    <div className="w-[400px] rounded-2xl border border-[#19140035] bg-white p-6 shadow-sm my-8 ml-8">
       <h4 className="text-4l font-bold text-center my-4">{ix + 1}. {item.product.name}</h4>
       <h4 className="text-4l font-bold text-center my-4">{item.product.price.toFixed(2)} $</h4>
       <Link

@@ -37,6 +37,8 @@ return new class extends Migration
                 $items->save();
             });
         });
+
+        ProductItem::whereProductId(Product::whereName('Spear')->first()->id)->update(['amount' => 5]);
     }
 
     public function down(): void

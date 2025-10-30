@@ -1,6 +1,7 @@
 <?php
 
-use App\Models\Shop\Product\Product;
+use App\Models\Shop\Cart\Cart;
+use App\Models\Shop\Cart\CartStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -9,16 +10,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(Product::TABLE_NAME, function (Blueprint $table) {
+        Schema::create(Cart::TABLE_NAME, function (Blueprint $table) {
             $table->id();
-            $table->string('name', 500)->nullable(false);
-            $table->decimal('price')->nullable(false);
+            $table->uuid('client_uuid');
+            $table->tinyInteger('status')->default(CartStatusEnum::potential->value);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists(Product::TABLE_NAME);
+        Schema::dropIfExists(Cart::TABLE_NAME);
     }
 };

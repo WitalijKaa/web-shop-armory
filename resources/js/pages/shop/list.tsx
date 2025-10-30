@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react'
 import ProductItemBasic from '@/components/shop/product-item-basic'
 
-export default function List({ items }) {
+export default function List({ items, cart }) {
   return (
     <>
       <Head title="Armory SHOP" />
@@ -11,6 +11,8 @@ export default function List({ items }) {
           <ProductItemBasic key={item.id} item={item} ix={ix} />
         ))}
       </div>
+
+      <div className="mt-20">User {cart.client_uuid}</div>
     </>
   )
 }

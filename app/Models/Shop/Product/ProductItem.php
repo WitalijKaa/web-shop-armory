@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $id
  * @property int $product_id
  * @property int $amount
+ * @property int $amount_reserved
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem first($columns = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem orderBy($column, $direction = 'asc')
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductItem whereAmountReserved($value)
  *
  * @property-read Product $product
  * 
