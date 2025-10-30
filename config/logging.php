@@ -52,6 +52,19 @@ return [
 
     'channels' => [
 
+        'dev_log' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/dev_log.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
+        'mail' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/mail.log'),
+            'level'  => 'debug',
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
