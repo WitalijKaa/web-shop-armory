@@ -15,7 +15,11 @@ Route::group(['as' => 'web.', 'middleware' => [CartUnregisteredMiddleware::class
     });
 });
 
-
+Route::group(['as' => 'admin.'], function() {
+    Route::group(['as' => 'product-item.', 'prefix' => 'admin'], function() {
+        Route::get('list', App\Http\Controllers\Admin\AdminProductItemListAction::class)->name('list');
+    });
+});
 
 
 Route::get('/', function () {
