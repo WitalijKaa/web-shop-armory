@@ -28,12 +28,13 @@ class Cart extends \Eloquent
     public const string TABLE_NAME = 'cart';
     protected $table = self::TABLE_NAME;
 
-    public function addToCartByProductID(int $id, int $amount = 1) {
+    public function addToCartByProductID(int $id, int $amount = 1): ?CartItem
+    {
         if (!$this->id) {
             $this->save();
         }
 
-        DB::transaction(function () use ($id, $amount) {
+        return DB::transaction(function () use ($id, $amount) {
             $items = ProductItem::whereProductId($id)
                 ->where('amount', '>=', $amount)
                 ->lockForUpdate()
@@ -49,6 +50,8 @@ class Cart extends \Eloquent
                 $items->save();
                 $cartItems->save();
             }
+
+            return $cartItems;
         });
     }
 

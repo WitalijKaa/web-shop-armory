@@ -1,0 +1,22 @@
+{
+    "name": "web-shop-armory/notifications",
+    "description": "Notifications package for the web shop.",
+    "type": "library",
+    "version": "0.1.0",
+    "autoload": {
+        "psr-4": {
+            "WebShop\\Notifications\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^12.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "WebShop\\Notifications\\NotificationsServiceProvider"
+            ]
+        }
+    }
+}

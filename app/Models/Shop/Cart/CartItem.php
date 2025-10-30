@@ -2,8 +2,9 @@
 
 namespace App\Models\Shop\Cart;
 
-use App\Models\Shop\Product\ProductItem as ProductItemModel;
+use App\Models\Shop\Product\ProductItem;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -31,6 +32,30 @@ class CartItem extends \Eloquent
 
     public $timestamps = false;
     protected $guarded = ['id'];
+
+    public function removeFromCart(int $amount = 1): void
+    {
+        DB::transaction(function () use ($amount) {
+            $items = ProductItem::whereProductId($this->product_item_id)
+                ->lockForUpdate()
+                ->first();
+
+            $amount = $this->amount < $amount ? $this->amount : $amount;
+
+            $items->amount += $amount;
+            $items->amount_reserved -= $amount;
+
+            $this->amount -= $amount;
+
+            $items->save();
+
+            if ($this->amount > 0) {
+                $this->save();
+            } else {
+                $this->delete();
+            }
+        });
+    }
 
     public static function itemsToAddToCart(int $cartID, int $productItemID): static
     {
