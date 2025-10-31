@@ -33,9 +33,9 @@ class ProductItemLowAmountNotification extends Notification implements Notificat
         $level = $this->level();
 
         return (new MailMessage)
-            ->subject("{$this->productItem->name}: {$level} level")
+            ->subject("{$this->productItem->product->name}: {$level} level")
             ->greeting("Hello!")
-            ->line("Stock for \"{$this->productItem->name}\" dropped to the {$level} level.")
+            ->line("Stock for \"{$this->productItem->product->name}\" dropped to the {$level} level.")
             ->line("Available quantity: {$this->amount}.")
             ->line("Please restock as soon as possible.");
     }
@@ -75,10 +75,6 @@ class ProductItemLowAmountNotification extends Notification implements Notificat
 
     public function isAllowedToSend(): bool
     {
-        if (Cache::get(ShopDatabaseChannel::CACHE_PREFIX . $this->actionID())) {
-            return false;
-        }
-
         return !ShopDatabaseChannel::isRecentExists($this, now()->subHours($this->limitRepeatHours()));
     }
 

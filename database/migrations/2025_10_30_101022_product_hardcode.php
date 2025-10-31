@@ -32,7 +32,7 @@ return new class extends Migration
         Product::chunk(50, function (Collection $clt) {
             $clt->each(function (Product $model) {
                 $items = new ProductItem();
-                $items->amount = rand(50, 123);
+                $items->amount = 100;
                 $items->product_id = $model->id;
                 $items->save();
             });

@@ -42,6 +42,12 @@ class ShopDatabaseChannel extends BaseDatabaseChannel
 
     public static function isRecentExists(NotificationInterface $notification, Carbon $recentTime): bool
     {
+        /** @var \WebShop\Notifications\Notifications\NotificationInterface $notification */
+
+        if (Cache::get(self::CACHE_PREFIX . $notification->actionID())) {
+            return true;
+        }
+
         $model = Notification::whereType(self::TYPES[$notification::class])
             ->whereActionId($notification->actionID())
             ->where('created_at', '>', $recentTime)
