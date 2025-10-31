@@ -12,8 +12,9 @@ return new class extends Migration
     {
         Schema::create(Cart::TABLE_NAME, function (Blueprint $table) {
             $table->id();
-            $table->uuid('client_uuid');
-            $table->tinyInteger('status')->default(CartStatusEnum::potential->value);
+            $table->uuid('client_uuid')->nullable(false);
+            $table->tinyInteger('status')->default(CartStatusEnum::potential->value)->nullable(false);
+            $table->dateTime('paid_at')->nullable(true);
             $table->timestamps();
         });
     }

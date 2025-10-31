@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create(CartItem::TABLE_NAME, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cart_id');
-            $table->unsignedBigInteger('product_item_id');
-            $table->unsignedBigInteger('amount');
+            $table->unsignedBigInteger('cart_id')->nullable(false);
+            $table->unsignedBigInteger('product_item_id')->nullable(false);
+            $table->unsignedInteger('amount')->nullable(false);
+            $table->decimal('price')->nullable(true);
 
             $table->foreign('cart_id', 'ix_ci_cart')
                 ->references('id')

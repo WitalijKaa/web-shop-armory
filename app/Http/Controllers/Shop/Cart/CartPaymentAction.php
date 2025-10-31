@@ -10,9 +10,9 @@ use WebShop\Notifications\Events\ProductItemAmountChangedEvent;
 
 class CartPaymentAction
 {
-    public function __invoke(Request $request, CartProviderInterface $cartProvider)
+    public function __invoke(CartProviderInterface $cartProvider)
     {
-        if (!$cartReserved = $cartProvider->cartReserved($request)) {
+        if (!$cartReserved = $cartProvider->cartReserved()) {
             // log error
             return redirect()->route('web.product-item.list');
         }

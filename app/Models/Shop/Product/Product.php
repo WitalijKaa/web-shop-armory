@@ -6,6 +6,8 @@ namespace App\Models\Shop\Product;
  * @property int $id
  * @property string $name
  * @property float $price
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product first($columns = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Product orderBy($column, $direction = 'asc')

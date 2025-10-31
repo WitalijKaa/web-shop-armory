@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $cart_id
  * @property int $product_item_id
  * @property int $amount
+ * @property float $price
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem first($columns = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CartItem orderBy($column, $direction = 'asc')
@@ -89,6 +90,7 @@ class CartItem extends \Eloquent
     {
         return [
             'amount' => 'int',
+            'price' => 'float',
         ];
     }
 }

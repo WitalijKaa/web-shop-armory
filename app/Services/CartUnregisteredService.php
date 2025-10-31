@@ -15,6 +15,7 @@ class CartUnregisteredService implements CartProviderInterface
     private const int COOKIE_TTL_MINUTES = 60 * 24 * 180; // 180 days
 
     private Cart $cart;
+    private string $uuid;
 
     public function cart(): Cart {
         return $this->cart;
@@ -22,29 +23,29 @@ class CartUnregisteredService implements CartProviderInterface
 
     public function initCart(Request $request): void
     {
-        $uuid = $request->cookie(self::COOKIE_NAME) ?? Str::uuid()->toString();
+        $this->uuid = $request->cookie(self::COOKIE_NAME) ?? Str::uuid()->toString();
 
-        $this->cart = Cart::whereClientUuid($uuid)
+        $this->cart = Cart::whereClientUuid($this->uuid)
             ->whereStatus(CartStatusEnum::potential)
-            ->with(['items'])
+            ->with(['items.productItem.product'])
             ->first() ?? new Cart();
 
-        $this->cart->client_uuid = $uuid;
+        $this->cart->client_uuid = $this->uuid;
         $this->cart->status = CartStatusEnum::potential;
 
         Cookie::queue(Cookie::make(
             name: self::COOKIE_NAME,
-            value: $uuid,
+            value: $this->uuid,
             minutes: self::COOKIE_TTL_MINUTES,
         ));
     }
 
-    public function cartReserved(Request $request): ?Cart
+    public function cartReserved(): ?Cart
     {
-        if ($uuid = $request->cookie(self::COOKIE_NAME)) {
-            return Cart::whereClientUuid($uuid)
+        if (!empty($this->uuid)) {
+            return Cart::whereClientUuid($this->uuid)
                 ->whereStatus(CartStatusEnum::reserved)
-                ->with(['items'])
+                ->with(['items.productItem.product'])
                 ->first();
         }
         return null;

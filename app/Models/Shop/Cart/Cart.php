@@ -2,6 +2,7 @@
 
 namespace App\Models\Shop\Cart;
 
+use App\Models\Shop\Product\Product;
 use App\Models\Shop\Product\ProductItem;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\DB;
  * @property int $id
  * @property string $client_uuid
  * @property int $status
+ * @property \Illuminate\Support\Carbon|null $paid_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart first($columns = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Cart orderBy($column, $direction = 'asc')
@@ -30,7 +34,7 @@ class Cart extends \Eloquent
     public const string TABLE_NAME = 'cart';
     protected $table = self::TABLE_NAME;
 
-    protected $appends = ['mayReserve', 'mayPay'];
+    protected $appends = ['mayReserve', 'mayPay', 'price', 'price_reserved'];
 
     public function addToCartByProductID(int $id, int $amount = 1): void
     {
@@ -54,26 +58,34 @@ class Cart extends \Eloquent
 
     public function reserveToCartByProductItemID(CartItem $cartItems): void
     {
-        DB::transaction(function () use ($cartItems) {
+        $productID = ProductItem::whereId($cartItems->product_item_id)->select('product_id')->first()->product_id;
+        $price = Product::whereId($productID)->select('price')->first()->price;
+
+        DB::transaction(function () use ($cartItems, $price) {
             $items = ProductItem::whereId($cartItems->product_item_id)
                 ->lockForUpdate()
                 ->first();
 
-            if ($items) {
-                $actualAmount = $cartItems->amount > $items->amount ? $items->amount : $cartItems->amount;
-                
-                if ($actualAmount < $cartItems->amount) {
-                    // inform client that not everything is available
-                }
-    
-                $items->amount -= $actualAmount;
-                $items->amount_reserved += $actualAmount;
+            $actualAmount = $cartItems->amount > $items->amount ? $items->amount : $cartItems->amount;
 
-                $cartItems->amount = $actualAmount;
-
-                $items->save();
-                $cartItems->save();
+            if ($actualAmount < 1) {
+                $cartItems->delete();
+                return;
+                // inform client that nothing is available
             }
+            
+            if ($actualAmount < $cartItems->amount) {
+                // inform client that not everything is available
+            }
+
+            $items->amount -= $actualAmount;
+            $items->amount_reserved += $actualAmount;
+
+            $cartItems->amount = $actualAmount;
+            $cartItems->price = $price;
+
+            $items->save();
+            $cartItems->save();
         });
     }
 
@@ -111,6 +123,14 @@ class Cart extends \Eloquent
 
     public function getMayPayAttribute() {
         return $this->status == CartStatusEnum::reserved;
+    }
+
+    public function getPriceAttribute() {
+        return $this->items->sum(fn (CartItem $cartItem) => $cartItem->amount * $cartItem->productItem->product->price);
+    }
+
+    public function getPriceReservedAttribute() {
+        return $this->items->sum(fn (CartItem $cartItem) => $cartItem->amount * $cartItem->price);
     }
 
     protected $guarded = ['id'];

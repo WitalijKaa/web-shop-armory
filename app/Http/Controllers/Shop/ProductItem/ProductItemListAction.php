@@ -17,7 +17,7 @@ class ProductItemListAction
 
         return Inertia::render('shop/list', [
           'items' => $models,
-          'cart_uuid' => $cartProvider->cart()->items->count() ? $cartProvider->cart()->client_uuid : null,
+          'cart_uuid' => $cartProvider->cart()->items->count() || $cartProvider->cartReserved() ? $cartProvider->cart()->client_uuid : null,
         ]);
     }
 }

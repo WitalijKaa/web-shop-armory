@@ -9,9 +9,9 @@ use Inertia\Inertia;
 
 class CartViewAction
 {
-    public function __invoke(Request $request, CartProviderInterface $cartProvider)
+    public function __invoke(CartProviderInterface $cartProvider)
     {
-        $cartReserved = $cartProvider->cartReserved($request)?->loadMissing(['items.productItem.product']);
+        $cartReserved = $cartProvider->cartReserved();
 
         if (!$cartProvider->cart()->items->count() && !$cartReserved) {
             // log error
