@@ -119,7 +119,8 @@ class Cart extends \Eloquent
 
         $this->items->each(function (CartItem $cartItems) {
             do {
-                DB::transaction(function () use ($cartItems) {
+                try {
+                    DB::transaction(function () use ($cartItems) {
                         $productItems = ProductItem::whereId($cartItems->product_item_id)->lockForUpdate()->first();
 
                         $amountReserved = $productItems->amount_reserved - $cartItems->amount;
@@ -133,8 +134,6 @@ class Cart extends \Eloquent
                             ->update(['amount_reserved' => $amountReserved]);
                     });
                     $success = true;
-                try {
-                    
                 }
                 catch(\Throwable) {
                     $success = false;
@@ -184,6 +183,7 @@ class Cart extends \Eloquent
     {
         return [
             'status' => CartStatusEnum::class,
+            'paid_at' => 'datetime',
         ];
     }
 }

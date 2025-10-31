@@ -36,7 +36,7 @@ class BuyReport extends Command
         $from = now()->subDays($subDays)->startOfDay();
         $to = now()->subDays($subDays)->endOfDay();
 
-        $report = [['cart', 'client_uuid', 'cart_total_price', 'product_name', 'product_amount', 'product_total_price', 'product_price_per_item', 'product_current_price']];
+        $report = [['cart', 'time', 'client_uuid', 'cart_total_price', 'product_name', 'product_amount', 'product_total_price', 'product_price_per_item', 'product_current_price']];
 
         Cart::whereBetween('paid_at', [$from, $to])
             ->whereStatus(CartStatusEnum::paid->value)
@@ -46,6 +46,7 @@ class BuyReport extends Command
 
                     $report[] = [
                         $cart->id,
+                        $cart->paid_at->format('Y-m-d H:i:s'),
                         $cart->client_uuid,
                         $cart->priceReserved,
                     ];
@@ -53,6 +54,7 @@ class BuyReport extends Command
                     $cart->items->each(function (CartItem $cartItem) use (&$report, $cart) {
                         $report[] = [
                             $cart->id,
+                            $cart->paid_at->format('Y-m-d H:i:s'),
                             $cart->client_uuid,
                             $cart->priceReserved,
                             $cartItem->productItem->product->name,
