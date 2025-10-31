@@ -7,6 +7,7 @@ use App\Models\Shop\Product\ProductItem;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @property int $id
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\DB;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, CartItem> $items
  * @property-read bool $mayReserve
  * @property-read bool $mayPay
+ * @property-read float $price
+ * @property-read float $priceReserved
  *
  * @mixin \Eloquent
  */
@@ -34,7 +37,7 @@ class Cart extends \Eloquent
     public const string TABLE_NAME = 'cart';
     protected $table = self::TABLE_NAME;
 
-    protected $appends = ['mayReserve', 'mayPay', 'price', 'price_reserved'];
+    protected $appends = ['mayReserve', 'mayPay', 'price', 'priceReserved'];
 
     public function addToCartByProductID(int $id, int $amount = 1): void
     {
@@ -100,6 +103,43 @@ class Cart extends \Eloquent
         });
         
         $this->status = CartStatusEnum::reserved;
+        $this->save();
+    }
+
+    public function payCartItems(): void
+    {
+        if ($this->status != CartStatusEnum::reserved) {
+            throw new \Exception('Pay critical error');
+        }
+
+        $this->items->each(function (CartItem $cartItems) {
+            do {
+                DB::transaction(function () use ($cartItems) {
+                        $productItems = ProductItem::whereId($cartItems->product_item_id)->lockForUpdate()->first();
+
+                        $amountReserved = $productItems->amount_reserved - $cartItems->amount;
+                        if ($amountReserved < 0) {
+                            // alert critical error
+                            $amountReserved = 0;
+                        }
+
+                        ProductItem::whereId($cartItems->product_item_id)
+                            ->whereAmountReserved($productItems->amount_reserved)
+                            ->update(['amount_reserved' => $amountReserved]);
+                    });
+                    $success = true;
+                try {
+                    
+                }
+                catch(\Throwable) {
+                    $success = false;
+                    // add $limit and if something very wrong inform client
+                }
+            } while (!$success);
+        });
+        
+        $this->status = CartStatusEnum::paid;
+        $this->paid_at = now();
         $this->save();
     }
 

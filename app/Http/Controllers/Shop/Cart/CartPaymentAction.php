@@ -3,10 +3,6 @@
 namespace App\Http\Controllers\Shop\Cart;
 
 use App\Interfaces\CartProviderInterface;
-use App\Models\Shop\Cart\CartItem;
-use App\Models\Shop\Cart\CartStatusEnum;
-use Illuminate\Http\Request;
-use WebShop\Notifications\Events\ProductItemAmountChangedEvent;
 
 class CartPaymentAction
 {
@@ -17,12 +13,7 @@ class CartPaymentAction
             return redirect()->route('web.product-item.list');
         }
 
-        $cartReserved->status = CartStatusEnum::paid;
-        $cartReserved->save();
-
-        $cartReserved->items->each(function (CartItem $model) {
-            //event(new ProductItemAmountChangedEvent($model->product_item_id));
-        });
+        $cartReserved->payCartItems();
 
         return redirect()->route('web.product-item.list');
     }

@@ -45,7 +45,7 @@ class CartUnregisteredService implements CartProviderInterface
         if (!empty($this->uuid)) {
             return Cart::whereClientUuid($this->uuid)
                 ->whereStatus(CartStatusEnum::reserved)
-                ->with(['items.productItem.product'])
+                ->with(['items'])
                 ->first();
         }
         return null;

@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Shop\Cart;
 
 use App\Interfaces\CartProviderInterface;
 use App\Models\Shop\Product\ProductItem;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CartViewAction
 {
     public function __invoke(CartProviderInterface $cartProvider)
     {
-        $cartReserved = $cartProvider->cartReserved();
+        $cartReserved = $cartProvider->cartReserved()?->loadMissing(['items.productItem.product'])
+            ->append(['mayReserve', 'mayPay', 'priceReserved']);
 
         if (!$cartProvider->cart()->items->count() && !$cartReserved) {
             // log error
