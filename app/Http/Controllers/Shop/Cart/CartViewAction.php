@@ -23,7 +23,7 @@ class CartViewAction
 
         return Inertia::render('shop/cart', [
           'items' => $models,
-          'cart' => $cartProvider->cart(),
+          'cart' => $cartProvider->cart()->append(['mayReserve', 'mayPay', 'price']),
           'cart_reserved' => $cartReserved,
         ]);
     }

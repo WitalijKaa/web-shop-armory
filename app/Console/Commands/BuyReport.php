@@ -6,11 +6,13 @@ use App\Models\Shop\Cart\Cart;
 use App\Models\Shop\Cart\CartItem;
 use App\Models\Shop\Cart\CartStatusEnum;
 use Illuminate\Console\Command;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class BuyReport extends Command
 {
-    protected $signature = 'product:report {--sub_days=}';
+    protected $signature = 'product:report {--sub_days=} {--send_email=}';
 
     protected $description = 'Creates a report of purchased products.';
 
@@ -19,10 +21,14 @@ class BuyReport extends Command
     public function handle()
     {
         $subDays = (int)$this->option('sub_days');
+        $sendEmail = $this->option('send_email');
 
         if ($report = $this->createReportForDay($subDays)) {
             $filePath = $this->saveReportToFile($report);
-            echo $filePath . "\n";
+            
+            if ($sendEmail) {
+                $this->sendEmailWithReport($filePath, $sendEmail);
+            }
         }
     }
 
@@ -72,5 +78,19 @@ class BuyReport extends Command
 
         fclose($stream);
         return $filePath;
+    }
+
+    private function sendEmailWithReport(string $reportFilePath, string $email): void {
+        Mail::raw(
+            'The daily report on sold products is attached.',
+            function (Message $message) use ($email, $reportFilePath) {
+                $message->to($email)
+                    ->subject('Daily report on sold products')
+                    ->attach($reportFilePath, [
+                        'as' => basename($reportFilePath),
+                        'mime' => 'text/csv',
+                    ]);
+            }
+        );
     }
 }

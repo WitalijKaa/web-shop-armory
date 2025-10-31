@@ -2,7 +2,6 @@
 
 use App\Http\Middleware\CartUnregisteredMiddleware;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::group(['as' => 'web.', 'middleware' => [CartUnregisteredMiddleware::class]], function() {
 
@@ -23,21 +22,8 @@ Route::group(['as' => 'admin.'], function() {
     });
 });
 
-
 Route::get('/', function () {
     return redirect()->route('web.product-item.list');
-
-    // return Inertia::render('welcome', [
-    //     'canRegister' => Features::enabled(Features::registration()),
-    // ]);
 });
-
-/*
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-});
-*/
 
 require __DIR__.'/settings.php';
