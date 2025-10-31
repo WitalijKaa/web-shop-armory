@@ -12,9 +12,11 @@ return new class extends Migration
         Schema::create(Notification::TABLE_NAME, function (Blueprint $table) {
             $table->uuid('uuid')->primary();
             $table->smallInteger('type')->unsigned()->nullable(false);
-            $table->string('action_id');
-            $table->text('payload');
+            $table->string('action_id', 32)->nullable(true);
+            $table->text('payload')->nullable(false);
             $table->timestamps();
+
+            $table->index(['created_at', 'action_id'], 'ix_n_created_at_action');
         });
     }
 

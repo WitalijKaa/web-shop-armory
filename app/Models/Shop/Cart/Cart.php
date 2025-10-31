@@ -99,7 +99,12 @@ class Cart extends \Eloquent
         }
 
         $this->items->each(function (CartItem $cartItems) {
-            $this->reserveToCartByProductItemID($cartItems);
+            try {
+                $this->reserveToCartByProductItemID($cartItems);
+            }
+            catch (\Throwable) {
+                // inform client about error with some items
+            }
         });
         
         $this->status = CartStatusEnum::reserved;

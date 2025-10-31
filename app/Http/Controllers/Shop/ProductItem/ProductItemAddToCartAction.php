@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Shop\ProductItem;
 use App\Interfaces\CartProviderInterface;
 use App\Models\Shop\Product\ProductItem;
 use App\Request\ProductItemAddToCartRequest;
-use WebShop\Notifications\Events\ProductItemAmountChangedEvent;
 
 class ProductItemAddToCartAction
 {

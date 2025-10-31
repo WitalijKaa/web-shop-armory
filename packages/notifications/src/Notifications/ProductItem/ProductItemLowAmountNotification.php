@@ -60,9 +60,9 @@ class ProductItemLowAmountNotification extends Notification implements Notificat
         ];
     }
 
-    public function actionID(): string
+    public function actionID(): ?string
     {
-        return 'low_product_amount_' . $this->productItem->product_id;
+        return 'prod_low_' . $this->productItem->product_id;
     }
 
     protected function level(): string

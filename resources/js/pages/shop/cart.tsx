@@ -26,9 +26,9 @@ export default function List({ items, cart, cart_reserved }) {
         {cart_reserved && (
           <div className="flex flex-col items-center mt-20">
             <h2 className="text-4xl font-bold text-center my-4">Reserved cart</h2>
-            <h2 className="text-4xl font-bold text-center my-4">Total price {cart_reserved.priceReserved} $</h2>
+            <h2 className="text-4xl font-bold text-center my-4">Total price {cart_reserved.priceReserved.toFixed(2)} $</h2>
             <Link href={cartPayment()} className="mb-8 mt-4 inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]" >
-              Buy items for {cart_reserved.priceReserved} $
+              Buy items for {cart_reserved.priceReserved.toFixed(2)} $
             </Link>
             <div className="flex flex-wrap justify-center gap-3">
               {cart_reserved.items.map((item, ix) => (
